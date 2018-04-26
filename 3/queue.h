@@ -19,21 +19,45 @@ public:
         head = NULL;
         tail = NULL;
     }
+
     Queue(D data)
     {
         head = new Node<D>(data);
         tail = head;
     }
+
+    ~Queue()
+    {
+        DeleteNodes(head);
+    }
+
+    Queue(const Queue<D>& in)
+    {
+        ListExtrema<D> temp = CopyNodes(in.head);
+        head = temp.head;
+        tail = temp.tail;
+    }
+
+    Queue<D>& operator=(const Queue<D>& rhs)
+    {
+        DeleteNodes(head);
+        ListExtrema<D> temp = CopyNodes(in.head);
+        head = temp.head;
+        tail = temp.tail;
+    }
+
     bool empty()
     {
         return head == NULL;
     }
+
     D front()
     {
         if(empty())
             throw std::length_error("queue is empty");
         return head->data;
     }
+
     void push_back(D data)
     {
         if(head == NULL)
@@ -48,6 +72,7 @@ public:
             tail = newTail;
         }
     }
+
     void pop()
     {
         if(empty())
