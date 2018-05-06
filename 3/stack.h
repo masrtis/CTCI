@@ -1,72 +1,81 @@
-//Implement a basic stack
-#include <stdexcept>
-#include "node.h"
+// Implement a basic stack
 
+#ifndef stack_h
+#define stack_h
+
+#include "node.h"
+#include <stdexcept>
 
 namespace custom
 {
-template <class D>
+template < class D >
 class Stack
 {
 private:
-    Node<D> * head;
+    Node< D > *m_head;
+    size_t m_size;
+
 public:
     Stack()
     {
-        head = NULL;
+        m_head = NULL;
+        m_size = 0;
     }
 
-    Stack(D data)
+    Stack( D data )
     {
-        head = new Node<D>;
-        head->data = data;
+        m_head = new Node< D >;
+        m_head->data = data;
+        m_size = 1;
     }
 
-    ~Stack()
+    ~Stack() { DeleteNodes( m_head ); }
+
+    void push( D data )
     {
-        DeleteNodes(head);
+        Node< D > *oldHead = m_head;
+        m_head = new Node< D >( data );
+        m_head->next = oldHead;
+        ++m_size;
     }
 
-    void push(D data)
+    // copy constructor
+    Stack( const Stack< D > &in )
     {
-        Node<D> * oldHead = head;
-        head = new Node<D>(data);
-        head->next = oldHead;
+        m_head = CopyNodes( in.m_head ).head;
+        m_size = in.m_size;
     }
 
-    //copy constructor
-    Stack(const Stack<D>& in)
+    // copy assignment
+    Stack< D > &operator=( const Stack< D > &rhs )
     {
-        head = CopyNodes(in.head).head;
-    }
-
-    //copy assignment
-    Stack<D>& operator=(const Stack<D>& rhs)
-    {
-        DeleteNodes(head);
-        head = CopyNodes(rhs.head).head;
+        DeleteNodes( m_head );
+        m_head = CopyNodes( rhs.m_head ).head;
+        m_size = rhs.m_size;
     }
 
     D top()
     {
-        if(empty())
-            throw std::length_error("stack is empty");
-        return head->data;
+        if( empty() )
+            throw std::length_error( "stack is empty" );
+        return m_head->data;
     }
 
     void pop()
     {
-        if(empty())
-            throw std::length_error("stack is empty");
-        Node<D> * oldHead = head;
-        head = oldHead->next;
-        delete head;
+        if( empty() )
+            throw std::length_error( "stack is empty" );
+        Node< D > *oldHead = m_head;
+        m_head = oldHead->next;
+        delete oldHead;
+        --m_size;
     }
 
-    bool empty()
-    {
-        return head == NULL;
-    }
+    size_t size() { return m_size; }
+
+    bool empty() { return m_size == 0; }
 };
 
-} // namespace
+} // namespace custom
+
+#endif // include guard
